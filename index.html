@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Caixa Eletrônico</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #141E30 0%, #243B55 100%);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #1e90ff, #00d4ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            width: 400px;
+            text-align: center;
+            position: relative;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1.1rem;
+            outline: none;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        select:hover, input:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        select:focus, input:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 10px;
+            background-color: #1e90ff;
+            border: none;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #00d4ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 212, 255, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-top: 20px;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        p.success {
+            color: #4caf50;
+        }
+
+        p.error {
+            color: #f44336;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e90ff 0%, #00d4ff 100%);
+            opacity: 0.2;
+            z-index: -1;
+            filter: blur(20px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simulador de Caixa Eletrônico</h1>
+
+        <label for="operacao">Selecione uma operação:</label>
+        <select id="operacao">
+            <option value="saldo">Consultar Saldo</option>
+            <option value="sacar">Sacar</option>
+            <option value="depositar">Depositar</option>
+        </select>
+
+        <label for="valor">Insira o valor:</label>
+        <input type="number" id="valor" placeholder="Ex: 100" min="0">
+
+        <button onclick="realizarOperacao()">Realizar</button>
+
+        <p id="resultado"></p>
+    </div>
+
+    <script>
+        // Saldo inicial fictício
+        let saldo = 1000;
+
+        function realizarOperacao() {
+            const operacao = document.getElementById('operacao').value;
+            const valorInput = document.getElementById('valor').value;
+            const resultado = document.getElementById('resultado');
+            let valor = parseFloat(valorInput);
+
+            // Limpar mensagem anterior
+            resultado.textContent = "";
+            resultado.className = ""; // Remove classes anteriores
+
+            // Operação de consultar saldo
+            if (operacao === "saldo") {
+                resultado.textContent = `Seu saldo é: R$ ${saldo.toFixed(2)}`;
+                resultado.classList.add("success");
+                return;
+            }
+
+            // Verifica se o valor é válido para as outras operações
+            if (isNaN(valor) || valor <= 0) {
+                resultado.textContent = "Por favor, insira um valor válido.";
+                resultado.classList.add("error");
+                return;
+            }
+
+            // Operação de saque
+            if (operacao === "sacar") {
+                if (valor > saldo) {
+                    resultado.textContent = "Saldo insuficiente para esta operação.";
+                    resultado.classList.add("error");
+                } else {
+                    saldo -= valor;
+                    resultado.textContent = `Você sacou R$ ${valor.toFixed(2)}. Seu novo saldo é: R$ ${saldo.toFixed(2)}`;
+                    resultado.classList.add("success");
+                }
+                return;
+            }
+
+            // Operação de depósito
+            if (operacao === "depositar") {
+                saldo += valor;
+                resultado.textContent = `Você depositou R$ ${valor.toFixed(2)}. Seu novo saldo é: R$ ${saldo.toFixed(2)}`;
+                resultado.classList.add("success");
+            }
+        }
+    </script>
+</body>
+</html>
